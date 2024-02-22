@@ -1,0 +1,40 @@
+#!/bin/sh
+# by Dominik Stanisław Suchora <suchora.dominik7@gmail.com>
+# License: GNU GPLv3
+
+if [ "$1" = '-h' ]
+then
+    printf "%s DIR\ndownload stories from sexstories.com\n" "$(basename "$0")"
+    exit 0
+fi
+
+OUTDIR="."
+[ "$#" -gt 0 ] && OUTDIR="$1"
+cd "$OUTDIR" || exit 1
+
+DOMAIN="https://sexstories.com"
+alias ucurl='curl -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) QtWebEngine/5.15.2 Chrome/87.0.4280.144 Safari/537.36" -H "Accept-Encoding: gzip, deflate" --compressed'
+
+for i in $(seq `ucurl -s "$DOMAIN/updates/" | hgrep 'div +class="pager"; a | "%(href)a\n"' | tail -n1 | sed 's/.*\///'`)
+do
+    for j in $(ucurl -s "$DOMAIN/updates/$i" | hgrep 'h4; a +href="/story/.*" | "'$DOMAIN'%(href)a\n"')
+    do
+        #[ "$(jobs | wc -l)" -gt '8' ] && wait -n
+        #{
+        t="$(ucurl -s "$j")"
+        NAME="$(echo "$t" | hgrep 'div +class="story_info"; h2 | "%i"' | sed -n '/<span/{s/<.*>//; s/^[[:space:]]*//g; s/[[:space:]]*$//g; p}' | recode html..UTF-8)"
+        FNAME="$(echo "$NAME" | sed 's/\//|/g')"
+        AUTHOR="$(echo "$t" | hgrep 'div +class="story_info"; h2; a | "%i\n"' | sed '/^$/s/^/Anonymous/' | recode html..UTF-8)"
+        GENRES="$(echo "$t" | hgrep 'div +class="top_info" | "%i\n"' | sed -E 's/\t//g; s/ {2,}//g; /^$/d; /<h/q;' | sed '/<h/d')"
+        TIME="$(echo "$t" | hgrep 'div +class="story_date" | "%i\n"' | sed -E 's/\t//g; s/ {2,}//g; /^$/d; s/<div.*//')"
+        COMMENTS="$(echo "$t" | hgrep 'div +class="count_comments" | "%i\n"')"
+        READ="$(echo "$t" | hgrep 'div +class="block_panel"; div +class="story_info" | "%i\n"' | grep 'Read <' | sed 's/.*Read/Read/; s/<span.*">//; s/<\/span>//; s/ |$//')"
+        RATED="$(echo "$t" | hgrep 'div +class="block_panel"; div +class="story_info" | "%i\n"' | grep 'Rated <' | sed 's/.*Rated/Rated/; s/<span.*">//; s/<\/span> //; s/ |$//')"
+        VOTES="$(echo "$t" | hgrep 'div +class="block_panel"; div +class="story_info"; a +class="color2" | "%i\n"')"
+        
+        printf 'Title: "%s"\nAuthor: "%s"\nGenres: "%s"\nTime: "%s"\nRead: "%s"\nRated: "%s"\nVotes: "%s"\nComments: "%s"\n' "$NAME" "$AUTHOR" "$GENRES" "$TIME" "$READ" "$RATED" "$VOTES" "$COMMENTS" > "$FNAME"
+        echo "$t" | hgrep 'div +class="block_panel" | "%i\n"' | sed '/<!-- VOTES -->/q' | sed -E '/<!-- VOTES -->/d; s/ {2,}//g; s/<h2>//; s/<\/h2>//; s/<br \/>//g; s/\r//g' | recode html..UTF-8 >> "$FNAME"
+        echo "$FNAME"
+        #} &
+    done
+done
