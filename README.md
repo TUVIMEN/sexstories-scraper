@@ -1,6 +1,6 @@
 # sexstories
 
-A shell script for downloading sexstories in nicely formated files
+A shell script for downloading sexstories in nicely formatted files
 
 ## Requirements
 
