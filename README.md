@@ -1,4 +1,4 @@
-# sexstories
+# sexstories-scraper
 
 A shell script for downloading sexstories in nicely formatted files
 
@@ -8,7 +8,7 @@ A shell script for downloading sexstories in nicely formatted files
 
 ## Installation
     
-    install -m 755 sexstories /usr/bin
+    install -m 755 sexstories-scraper /usr/bin
 
 ## Json format
 
@@ -16,7 +16,7 @@ Here's example of a [story](story-example).
 
 ## Usage
 
-    sexstories [DIR]
+    sexstories-scraper [DIR]
 
 Script goes through every page of [sexstories](https://sexstories.com) and downloads every story saving it in file named by it's title.
 
@@ -26,4 +26,4 @@ First 8 lines are reserved for metadata
 
 Get some help
 
-    sexstories -h
+    sexstories-scraper -h
