@@ -4,7 +4,7 @@ A shell script for downloading sexstories in nicely formatted files
 
 ## Requirements
 
- - [hgrep](https://github.com/TUVIMEN/hgrep)
+ - [reliq](https://github.com/TUVIMEN/reliq)
 
 ## Installation
     
@@ -22,7 +22,7 @@ Script goes through every page of [sexstories](https://sexstories.com) and downl
 
 First 8 lines are reserved for metadata
 
-    printf 'Title: "%s"\nAuthor: "%s"\nGenres: "%s"\nTime: "%s"\nRead: "%s"\nRated: "%s"\nVotes: "%s"\nComments: "%s"\n'
+    printf 'Link "%s"\nTitle: "%s"\nAuthor: "%s"\nGenres: "%s"\nTime: "%s"\nRead: "%s"\nRated: "%s"\nVotes: "%s"\nComments: "%s"\n'
 
 Get some help
 
