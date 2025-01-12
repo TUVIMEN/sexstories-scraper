@@ -25,13 +25,13 @@ do
         NAME="$(echo "$t" | reliq 'div .story_info; h2 | "%i" / tr "\n" sed "s/<.*//;s/ *$//"' | recode html..UTF-8)"
         FNAME="$(echo "$NAME" | sed 's/\//|/g')"
         AUTHOR="$(echo "$t" | reliq 'div .story_info; h2; a | "%i\n" / sed "/^$/s/^/Anonymous/"' | recode html..UTF-8)"
-        GENRES="$(echo "$t" | reliq 'div .top_info | "%i\n" / line [1]')"
+        GENRES="$(echo "$t" | reliq 'div .top_info | "%i\n" / line [0]')"
         TIME="$(echo "$t" | reliq 'div .story_date | "%i\n" / sed "s/ *<.*//"')"
         COMMENTS="$(echo "$t" | reliq 'div .count_comments | "%i\n"')"
         READ="$(echo "$t" | reliq 'div .block_panel; div .story_info | "%i\n" / sed "/^Read/{s/<span.*\">//; s/<\/span>//; s/ |$//;p}" "n"')"
         RATED="$(echo "$t" | reliq 'div .block_panel; div .story_info | "%i\n" / sed "/Rated/{s/<span.*\">//; s/<\/span>//; s/ |$//; s/ %/%/; s/^ *//;p}" "n"')"
         VOTES="$(echo "$t" | reliq 'div .block_panel; div .story_info; a .color2 | "%i\n"')"
-        
+
         printf 'Link: "%s"\nTitle: "%s"\nAuthor: "%s"\nGenres: "%s"\nTime: "%s"\nRead: "%s"\nRated: "%s"\nVotes: "%s"\nComments: "%s"\n\n' "$j" "$NAME" "$AUTHOR" "$GENRES" "$TIME" "$READ" "$RATED" "$VOTES" "$COMMENTS" > "$FNAME"
         echo "$t" | reliq 'div .block_panel | "%i\n"' | sed '/<!-- VOTES -->/q' | sed -E '/<!-- VOTES -->/d; s/ {2,}//g; s/<h2>//; s/<\/h2>//; s/<br \/>//g; s/\r//g' | recode html..UTF-8 >> "$FNAME"
         echo "$FNAME"
