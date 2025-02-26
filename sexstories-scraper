@@ -33,7 +33,7 @@ do
         VOTES="$(echo "$t" | reliq 'div .block_panel; div .story_info; a .color2 | "%i\n"')"
 
         printf 'Link: "%s"\nTitle: "%s"\nAuthor: "%s"\nGenres: "%s"\nTime: "%s"\nRead: "%s"\nRated: "%s"\nVotes: "%s"\nComments: "%s"\n\n' "$j" "$NAME" "$AUTHOR" "$GENRES" "$TIME" "$READ" "$RATED" "$VOTES" "$COMMENTS" > "$FNAME"
-        echo "$t" | reliq 'div .block_panel | "%i\n"' | sed '/<!-- VOTES -->/q' | sed -E '/<!-- VOTES -->/d; s/ {2,}//g; s/<h2>//; s/<\/h2>//; s/<br \/>//g; s/\r//g' | recode html..UTF-8 >> "$FNAME"
+        echo "$t" | reliq 'div .block_panel | "%i\n"' | sed '/<!-- VOTES -->/q' | sed -E '/<!-- VOTES -->/{s/ *<!-- VOTES -->.*//g}; s/ {2,}//g; s/<h2>//; s/<\/h2>//; s/<br \/>//g; s/\r//g; s/<span[^>]*>//g;s/<\/span>//g; s/^[ \t]*//' | recode html..UTF-8 >> "$FNAME"
         echo "$FNAME"
         #} &
     done
